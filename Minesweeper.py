@@ -11,7 +11,6 @@ class MineButton(object):
         self.button = Button(main_window, width=2, height=1, command=lambda r=self.row, c=self.column: button_function(r, c))
 
 
-
 grid_width = 15
 grid_height = 15
 bomb_percentage = 10
@@ -36,16 +35,20 @@ def create_grid(height, width):
 
 def plant_mines(height, width, percent):
     number = bomb_number(height, width, percent)
-    mines_list = []
+    mines = []
     count = 0
     while count < number:
         random_row = randint(0, height-1)
         random_col = randint(0, width-1)
         new_mine = [random_row, random_col]
-        if new_mine not in mines_list:
-            mines_list.append(new_mine)
+        if new_mine not in mines:
+            mines.append(new_mine)
             count += 1
-    return mines_list
+    return mines
+
+
+minefield = create_grid(grid_height, grid_width)
+mines_list = plant_mines(grid_height, grid_width, bomb_percentage)
 
 
 def boundary_getter(height, width):
@@ -101,82 +104,73 @@ def surround_mine(coord, height, width):
     return surround
 
 
-grid = create_grid(grid_height, grid_width)
-mines_list = plant_mines(grid_height, grid_width, bomb_percentage)
+def mine_counter(coord_list):
+    count = 0
+    for i in coord_list:
+        if i in mines_list:
+            count += 1
+    return count
+
+
+def count_labeler(count, row, column):
+    if count == 0:
+        label0 = Label(main_window, text="O")
+        label0.grid(row=row, column=column)
+        return False
+    elif count == 1:
+        label1 = Label(main_window, text=1, fg="#FF0000", font=("none", 10, "bold"))
+        label1.grid(row=row, column=column)
+    elif count == 2:
+        label2 = Label(main_window, text=2, fg="#FF0000", font=("none", 10, "bold"))
+        label2.grid(row=row, column=column)
+    elif count == 3:
+        label3 = Label(main_window, text=3, fg="#006400", font=("none", 10, "bold"))
+        label3.grid(row=row, column=column)
+    elif count == 4:
+        label4 = Label(main_window, text=4, fg="#008B8B", font=("none", 10, "bold"))
+        label4.grid(row=row, column=column)
+    elif count == 5:
+        label5 = Label(main_window, text=5, fg="#191970", font=("none", 10, "bold"))
+        label5.grid(row=row, column=column)
+    elif count == 6:
+        label6 = Label(main_window, text=6, fg="#8B4513", font=("none", 10, "bold"))
+        label6.grid(row=row, column=column)
+    elif count == 7:
+        label7 = Label(main_window, text=7, fg="#696969", font=("none", 10, "bold"))
+        label7.grid(row=row, column=column)
+    elif count == 8:
+        label8 = Label(main_window, text=8, fg="#000000", font=("none", 10, "bold"))
+        label8.grid(row=row, column=column)
+    return True
 
 
 
 def button_function(row, column):
-    grid[row][column].button.grid_remove()
-    label_mine = Label(main_window, text="M", font=("none", 10, "bold"))
     if [row, column] in mines_list:
+        label_mine = Label(main_window, text="M", font=("none", 10, "bold"))
+        minefield[row][column].button.grid_remove()
         label_mine.grid(row=row, column=column)
         return True
     else:
-        label0 = Label(main_window, text="O")
-        label1 = Label(main_window, text=1, fg="#FF8C00", font=("none", 10, "bold"))
-        label2 = Label(main_window, text=2, fg="#FF0000", font=("none", 10, "bold"))
-        label3 = Label(main_window, text=3, fg="#006400", font=("none", 10, "bold"))
-        label4 = Label(main_window, text=4, fg="#008B8B", font=("none", 10, "bold"))
-        label5 = Label(main_window, text=5, fg="#191970", font=("none", 10, "bold"))
-        label6 = Label(main_window, text=6, fg="#8B4513", font=("none", 10, "bold"))
-        label7 = Label(main_window, text=7, fg="#696969", font=("none", 10, "bold"))
-        label8 = Label(main_window, text=8, fg="#000000", font=("none", 10, "bold"))
-        count = 0
         surround_list = surround_mine([row, column], grid_height, grid_width)
-        for i in surround_list:
-            if i in mines_list:
-                count += 1
-        if count == 0:
-            label0.grid(row=row, column=column)
-            # super_surround = [surround_list]
-            # checked_list = [[row, column]]
-            # for j in super_surround:
-            #     for k in j:
-            #         new_count = 0
-            #         if k not in checked_list:
-            #             grid[k[0]][k[1]].button.grid_remove()
-            #             new_surround = surround_mine(k, grid_height, grid_width)
-            #             for mine in new_surround:
-            #                 if mine in mines_list:
-            #                     new_count += 1
-            #             if new_count == 0:
-            #                 label0.grid(row=k[0], column=k[1])
-            #                 super_surround.append(new_surround)
-            #             elif new_count == 1:
-            #                 label1.grid(row=k[0], column=k[1])
-            #             elif new_count == 2:
-            #                 label2.grid(row=k[0], column=k[1])
-            #             elif new_count == 3:
-            #                 label3.grid(row=k[0], column=k[1])
-            #             elif new_count == 4:
-            #                 label4.grid(row=k[0], column=k[1])
-            #             elif new_count == 5:
-            #                 label5.grid(row=k[0], column=k[1])
-            #             elif new_count == 6:
-            #                 label6.grid(row=k[0], column=k[1])
-            #             elif new_count == 7:
-            #                 label7.grid(row=k[0], column=k[1])
-            #             elif new_count == 8:
-            #                 label8.grid(row=k[0], column=k[1])
-            #             checked_list.append(k)
-        elif count == 1:
-            label1.grid(row=row, column=column)
-        elif count == 2:
-            label2.grid(row=row, column=column)
-        elif count == 3:
-            label3.grid(row=row, column=column)
-        elif count == 4:
-            label4.grid(row=row, column=column)
-        elif count == 5:
-            label5.grid(row=row, column=column)
-        elif count == 6:
-            label6.grid(row=row, column=column)
-        elif count == 7:
-            label7.grid(row=row, column=column)
-        elif count == 8:
-            label8.grid(row=row, column=column)
-        return False
+        count = mine_counter(surround_list)
+        if not count_labeler(count, row, column):
+            checked_list = [[row, column]]
+            super_surround = [surround_list]
+            for surr_lst in super_surround:
+                print(checked_list)
+                for mine in surr_lst:
+                    if mine not in checked_list:
+                        new_surround = surround_mine(mine, grid_height, grid_width)
+                        new_count = mine_counter(new_surround)
+                        if not count_labeler(new_count, mine[0], mine[1]):
+                            super_surround.append(new_surround)
+                        checked_list.append(mine)
+
+
+
+
+
 
 
 
@@ -190,9 +184,6 @@ def button_function(row, column):
 
 print(mines_list)
 
-
-
-
-
-
 main_window.mainloop()
+
+
